@@ -1,0 +1,2 @@
+Inject==3.3.2
+pymongo==3.7.1
