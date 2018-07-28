@@ -12,6 +12,7 @@ class Post:
         self.timestamp = timestamp
         self.created = created
         self.author_id = author_id
+        self.likes_amount = 0
 
     @classmethod
     def from_dict(cls, data: Dict):
@@ -22,3 +23,6 @@ class Post:
             created=data['created'],
             author_id=data['author_id']
         )
+
+    def like(self):
+        self.likes_amount += 1

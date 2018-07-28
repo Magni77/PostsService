@@ -2,7 +2,6 @@ from typing import Iterable, Dict, Optional
 
 import inject
 
-from application.repositories.mongo_posts import MongoPostsRepository
 from application.repositories.posts import PostsRepository
 from domain.entities.post import Post
 
