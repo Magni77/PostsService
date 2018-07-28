@@ -7,9 +7,9 @@ from domain.entities.post import Post
 class PostsRepository(metaclass=ABCMeta):
 
     @abstractmethod
-    def get(self, filters: Optional[Dict[str, str]]) -> Iterable[Post]:
-        pass
+    def get(self, filters: Optional[Dict]) -> Iterable[Post]:
+        raise NotImplementedError("Not implemented")
 
     @abstractmethod
     def save(self, post: Post):
-        pass
+        raise NotImplementedError("Not implemented")

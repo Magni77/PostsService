@@ -16,9 +16,11 @@ class MongoPostsRepository(PostsRepository):
         data = self.posts.find(filters)
         return [
             Post(
+                post['id'],
                 post['text'],
-                post['date'],
-                post['author']
+                post['timestamp'],
+                post['created'],
+                post['author_id']
             ) for post in data
         ]
 
