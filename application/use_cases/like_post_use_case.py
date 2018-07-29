@@ -10,7 +10,7 @@ class LikePostUseCase(object):
     repository: PostsRepository = inject.attr(PostsRepository)
 
     def like_post(self, post: Post, user_id: uuid4()):
-        post.like()
+        post.like(user_id)
         self.repository.save(post)
 
         # update likes amount in post entities

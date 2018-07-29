@@ -5,7 +5,7 @@ from application.use_cases.post_use_cases import CreatePostUseCase
 from domain.entities.post import Post
 
 
-def create_post_save_test(
+def create_post_test(
         post_repo_mock: Mock,
         post_mock: Mock):
 
