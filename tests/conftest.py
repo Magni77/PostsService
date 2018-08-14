@@ -44,3 +44,14 @@ def post_entity(exemplary_post_id):
         created=datetime(1995, 2, 22, 16, 6),
         author_id=exemplary_user_id
     )
+
+
+@pytest.fixture()
+def post_dict(exemplary_post_id):
+    return dict(
+        id=exemplary_post_id,
+        text="test",
+        timestamp=datetime(1995, 2, 22, 16, 5),
+        created=datetime(1995, 2, 22, 16, 6),
+        author_id=1
+    )

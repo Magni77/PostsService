@@ -17,5 +17,6 @@ class PostListUseCase:
 class CreatePostUseCase:
     repository: PostsRepository = inject.attr(PostsRepository)
 
-    def create(self, post: Post):
+    def create(self, post_data: Dict):
+        post = Post.from_dict(post_data)
         self.repository.save(post)

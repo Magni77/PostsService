@@ -9,9 +9,10 @@ from domain.entities.post import Post
 class LikePostUseCase(object):
     repository: PostsRepository = inject.attr(PostsRepository)
 
-    def like_post(self, post: Post, user_id: uuid4()):
+    def like_post(self, post_id: uuid4(), user_id: uuid4()):
+        post = self.repository.get({'id': post_id})[0]
         post.like(user_id)
-        self.repository.save(post)
+        self.repository.update(post)
 
         # update likes amount in post entities
         # send PostLikedEvent

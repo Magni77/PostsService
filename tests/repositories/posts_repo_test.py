@@ -17,6 +17,9 @@ class RepoMock(PostsRepository):
     def add_like(self, post: Post, user_id: uuid4()):
         super().add_like(post, user_id)
 
+    def update(self, post: Post):
+        super().update(post)
+
 
 def post_abstract_repo_has_methods_test(post_mock: Mock, exemplary_user_id):
     filter_ = {'author': 1}

@@ -18,3 +18,7 @@ class PostsRepository(metaclass=ABCMeta):
     @abstractmethod
     def add_like(self, post: Post, user_id: uuid4()):
         raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def update(self, post: Post):
+        raise NotImplementedError("Not implemented")

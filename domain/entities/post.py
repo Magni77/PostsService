@@ -17,7 +17,7 @@ class Post:
         self.likes: List[Like] = []
 
     @property
-    def likes_amount(self):
+    def likes_amount(self) -> int:
         return len(self.likes)
 
     @classmethod
@@ -28,6 +28,18 @@ class Post:
             timestamp=data['timestamp'],
             created=data['created'],
             author_id=data['author_id']
+        )
+
+    def to_dict(self):
+        return dict(
+            id=self.id,
+            text=self.text,
+            timestamp=self.timestamp,
+            created=self.created,
+            author_id=self.author_id,
+            likes=[
+                like.to_dict() for like in self.likes
+            ]
         )
 
     def like(self, user_id: uuid4()):
