@@ -8,6 +8,6 @@ class Like(object):
 
     def to_dict(self):
         return {
-            'post_id': self.post_id,
-            'author_id': self.author_id
+            'post_id': str(self.post_id),
+            'author_id': str(self.author_id)
         }
