@@ -6,19 +6,22 @@ import pytest
 from application.repositories.memory_posts import MemoryPostsRepository
 from domain.entities.post import Post
 
+id_1 = uuid4()
+id_2 = uuid4()
+
 
 @pytest.fixture()
 def posts():
     return [
         Post(
-            id=uuid4(),
+            id=id_1,
             text="test",
             timestamp=datetime(1995, 2, 22, 16, 5),
             created=datetime(1995, 2, 22, 16, 6),
             author_id=1
         ),
         Post(
-            id=uuid4(),
+            id=id_2,
             text="test2",
             timestamp=datetime(1995, 2, 22, 16, 5),
             created=datetime(1995, 2, 22, 16, 4),
@@ -62,3 +65,12 @@ def repository_list_with_filters_test(posts):
     assert not repo.get(
             filters={'created__gt': datetime(1995, 2, 22, 16, 10)}
         )
+
+
+def repository_get_with_id_test(posts):
+    repo = MemoryPostsRepository(posts)
+    post = repo.get(filters={'id': id_1})
+
+    assert isinstance(post, list)
+    assert len(post) == 1
+    assert post[0].id == id_1

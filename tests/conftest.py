@@ -31,6 +31,7 @@ def post_repo_mock(post_mock):
     return Mock(
         spec_set=PostsRepository,
         get=Mock(return_value=[post_mock]),
+        get_one=Mock(return_value=post_mock),
         add_like=Mock()
     )
 

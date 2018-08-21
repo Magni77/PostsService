@@ -22,3 +22,6 @@ class PostsRepository(metaclass=ABCMeta):
     @abstractmethod
     def update(self, post: Post):
         raise NotImplementedError("Not implemented")
+
+    def get_one(self, id):
+        pass

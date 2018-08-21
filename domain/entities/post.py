@@ -43,11 +43,6 @@ class Post:
         )
 
     def like(self, user_id: uuid4()):
-        self.likes.append(
-            Like(self.id, user_id)
-        )
-
-    def unlike(self, user_id: uuid4()):
         like = next(
             (
                 like for like in self.likes
@@ -55,7 +50,12 @@ class Post:
             ),
             None
         )
-        if like:
+
+        if not like:
+            self.likes.append(
+                Like(self.id, user_id)
+            )
+        else:
             self.likes.remove(
                 like
             )

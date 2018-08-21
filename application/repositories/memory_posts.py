@@ -1,3 +1,4 @@
+import uuid
 from uuid import uuid4
 
 from application.repositories.posts import PostsRepository
@@ -36,6 +37,15 @@ class MemoryPostsRepository(PostsRepository):
             result = [e for e in result if self._check(e, key, value)]
 
         return [Post for Post in result]
+
+    def get_one(self, id):
+        return next(
+            (
+                post for post in self._entries
+                if post.id == id
+            ),
+            None
+        )
 
     def save(self, post: Post):
         self._entries.append(post)

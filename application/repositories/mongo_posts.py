@@ -5,6 +5,7 @@ from pymongo import MongoClient
 
 from application.repositories.posts import PostsRepository
 from domain.entities.post import Post
+from documents import Post as PostDocument, Like as LikeDoc
 
 client = MongoClient()
 
@@ -14,27 +15,45 @@ class MongoPostsRepository(PostsRepository):
     posts = db.posts
 
     def get(self, filters: Optional[Dict]) -> Iterable[Post]:
-        data = self.posts.find(filters)
-        # print([x for x in data])
+        data = PostDocument.objects(**filters)
+        # data = self.posts.find(filters)
         return [
             Post(
-                post['_id'],
-                post['text'],
-                post.get('timestamp'),
-                post.get('created'),
-                post.get('author_id')
+                post.id,
+                post.text,
+                post.timestamp,
+                post.created,
+                post.author_id
             ) for post in data
         ]
 
     def save(self, post: Post):
+        post_doc = PostDocument.objects(id=post.id).first()
 
-        self.posts.insert_one(post.to_dict())
+        if not post_doc:
+            data = post.to_dict()
+            data.pop('id')
+            post_doc = PostDocument(**data)
+
+        likes = [LikeDoc(**like.to_dict()) for like in post.likes]
+        post_doc.likes.append(*likes)
+
+        post_doc.save()
+        # self.posts.insert_one(post.to_dict())
 
     def add_like(self, post: Post, user_id: uuid4()):
         pass
 
     def update(self, post):
-        print(post.to_dict())
+        post = PostDocument\
+            .objects(id=post.id) \
+            .update(
+                **post.to_dict()
+            )
+        # post.reload()
+        # data = post.to_dict()
+        # data['text'] = 'dupa'
+        # print(data)
         # self.posts.find_one(filters)
-        self.posts.find_one_and_replace({'id': post.id}, post.to_dict())
+        # self.posts.replace_one({'id': post.id}, data)
 

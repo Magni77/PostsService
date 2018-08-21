@@ -1,32 +1,88 @@
+import json
+import uuid
 from datetime import datetime
-from uuid import uuid4
+from uuid import uuid4, UUID
 
 import inject
+from bottle import route, run, response, request
 
+from application.repositories.memory_posts import MemoryPostsRepository
 from application.repositories.mongo_posts import MongoPostsRepository
 from application.repositories.posts import PostsRepository
+from application.serializers.post_serializers import PostEncoder
 from application.use_cases.like_post_use_case import LikePostUseCase
 from application.use_cases.post_use_cases import PostListUseCase, CreatePostUseCase
 
 
 def config(binder):
-    binder.bind(PostsRepository, MongoPostsRepository())
+    binder.bind(PostsRepository, MemoryPostsRepository())
 
 
 inject.configure(config)
-id = uuid4()
+
+id1 = uuid4()
+id2 = uuid4()
+
 post_data = dict(
-        id=id,
-        text="test",
+        id=id1,
+        text="tefdsfsst",
         timestamp=datetime(1995, 2, 22, 16, 5),
         created=datetime(1995, 2, 22, 16, 6),
-        author_id=1
+        author_id="1"
+    )
+
+post_data2 = dict(
+        id=id2,
+        text="tefdsf32sst",
+        timestamp=datetime(1995, 2, 22, 16, 5),
+        created=datetime(1995, 2, 22, 16, 6),
+        author_id="2"
     )
 
 create_post = CreatePostUseCase().create(post_data)
-posts = PostListUseCase().get_list({})
-print([x for x in posts])
-print(PostListUseCase().get_list({'id': id})[0].to_dict())
+create_post2 = CreatePostUseCase().create(post_data2)
 
-LikePostUseCase().like_post(id, uuid4())
-print(PostListUseCase().get_list({'id': id})[0].to_dict())
+posts = PostListUseCase().get_list({})
+
+post1 = PostListUseCase().get_list({'author_id': "2"})[0].to_dict()
+
+LikePostUseCase().like_post(post1['id'], 1)
+
+
+class PostSerializer(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, UUID):
+            return obj.hex
+        if isinstance(obj, datetime):
+            return obj.strftime("%Y-%m-%d %H:%M:%S")
+        return json.JSONEncoder.default(self, obj)
+
+
+@route('/posts')
+def posts():
+    response.headers['Content-Type'] = 'application/json'
+    filter_params = request.query.decode()
+    posts = PostListUseCase().get_list(filter_params)
+
+    return json.dumps([post for post in posts], cls=PostEncoder)
+
+
+@route('/posts', method='POST')
+def create_post():
+    response.headers['Content-Type'] = 'application/json'
+    use_case = CreatePostUseCase()
+    post = use_case.create(request.json)
+
+    return json.dumps(post, cls=PostEncoder)
+
+
+@route('/posts/<id>/like')
+def posts(id):
+    response.headers['Content-Type'] = 'application/json'
+    # TODo JWT AUTH - pass user id to use case
+    post = LikePostUseCase().like_post(uuid.UUID(id), 1)
+
+    return json.dumps(post, cls=PostEncoder)
+
+
+run(host='localhost', port=8080, debug=True, reloader=True)

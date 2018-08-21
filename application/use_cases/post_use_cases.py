@@ -1,4 +1,6 @@
+from datetime import datetime
 from typing import Iterable, Dict, Optional
+from uuid import uuid4
 
 import inject
 
@@ -18,5 +20,16 @@ class CreatePostUseCase:
     repository: PostsRepository = inject.attr(PostsRepository)
 
     def create(self, post_data: Dict):
-        post = Post.from_dict(post_data)
+        time = datetime.now()
+
+        data = dict(
+            id=uuid4(),
+            text=post_data.get('text'),
+            timestamp=time,
+            created=time,
+            author_id=post_data.get('author_id')
+        )
+
+        post = Post.from_dict(data)
         self.repository.save(post)
+        return post

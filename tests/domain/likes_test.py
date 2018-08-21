@@ -32,7 +32,7 @@ def unlike_post_remove_like_object_test(post_entity: Post, exemplary_user_id):
     post_entity.like(exemplary_user_id)
     old_likes_amount = len(post_entity.likes)
 
-    post_entity.unlike(exemplary_user_id)
+    post_entity.like(exemplary_user_id)
 
     assert len(post_entity.likes) < old_likes_amount
     like = next(
