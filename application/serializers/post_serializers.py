@@ -10,11 +10,11 @@ class PostEncoder(json.JSONEncoder):
                 'text': obj.text,
                 'timestamp': obj.timestamp.isoformat(), #strftime("%Y-%m-%d %H:%M:%S"),
                 'created': obj.created.strftime("%Y-%m-%d %H:%M:%S"),
-                'author_id': obj.author_id,
-                'likes_amount': len(obj.likes),
+                'authorID': obj.author_id,
+                'likesAmount': len(obj.likes),
                 'likes': [
                     {
-                        'author_id': like.author_id
+                        'authorID': like.author_id
                     } for like in obj.likes
                 ],
             }

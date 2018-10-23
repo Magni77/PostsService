@@ -6,6 +6,7 @@ from uuid import uuid4, UUID
 import inject
 from bottle import route, run, response, request
 
+from api.decorators import login_required
 from application.repositories.memory_posts import MemoryPostsRepository
 from application.repositories.mongo_posts import MongoPostsRepository
 from application.repositories.posts import PostsRepository
@@ -28,7 +29,7 @@ post_data = dict(
         text="tefdsfsst",
         timestamp=datetime(1995, 2, 22, 16, 5),
         created=datetime(1995, 2, 22, 16, 6),
-        author_id="1"
+        author_id="4b114b4315b24df09829e0bd2ab4a89f"
     )
 
 post_data2 = dict(
@@ -36,7 +37,7 @@ post_data2 = dict(
         text="tefdsf32sst",
         timestamp=datetime(1995, 2, 22, 16, 5),
         created=datetime(1995, 2, 22, 16, 6),
-        author_id="2"
+        author_id="4b114b4315b24df09829e0bd2ab4a89f"
     )
 
 create_post = CreatePostUseCase().create(post_data)
@@ -44,45 +45,38 @@ create_post2 = CreatePostUseCase().create(post_data2)
 
 posts = PostListUseCase().get_list({})
 
-post1 = PostListUseCase().get_list({'author_id': "2"})[0].to_dict()
+post1 = PostListUseCase().get_list({'author_id': "4b114b4315b24df09829e0bd2ab4a89f"})[0].to_dict()
 
 LikePostUseCase().like_post(post1['id'], 1)
 
 
-class PostSerializer(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, UUID):
-            return obj.hex
-        if isinstance(obj, datetime):
-            return obj.strftime("%Y-%m-%d %H:%M:%S")
-        return json.JSONEncoder.default(self, obj)
-
-
 @route('/posts')
-def posts():
+@login_required
+def posts(user):
     response.headers['Content-Type'] = 'application/json'
     filter_params = request.query.decode()
     posts = PostListUseCase().get_list(filter_params)
-
     return json.dumps([post for post in posts], cls=PostEncoder)
 
 
 @route('/posts', method='POST')
-def create_post():
+@login_required
+def create_post(user):
     response.headers['Content-Type'] = 'application/json'
     use_case = CreatePostUseCase()
+    request.json['author_id'] = user.get('id')
     post = use_case.create(request.json)
 
     return json.dumps(post, cls=PostEncoder)
 
 
-@route('/posts/<id>/like')
-def posts(id):
+@route('/posts/<id>/like', method='PUT')
+@login_required
+def posts(user, id):
     response.headers['Content-Type'] = 'application/json'
-    # TODo JWT AUTH - pass user id to use case
-    post = LikePostUseCase().like_post(uuid.UUID(id), 1)
+    post = LikePostUseCase().like_post(uuid.UUID(id), user.get('id'))
 
     return json.dumps(post, cls=PostEncoder)
 
 
-run(host='localhost', port=8080, debug=True, reloader=True)
+run(host='localhost', port=8082, debug=True, reloader=True)
