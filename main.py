@@ -33,15 +33,24 @@ post_data = dict(
     )
 
 post_data2 = dict(
-        id=id2,
-        text="tefdsf32sst",
-        timestamp=datetime(1995, 2, 22, 16, 5),
-        created=datetime(1995, 2, 22, 16, 6),
-        author_id="4b114b4315b24df09829e0bd2ab4a89f"
-    )
+    id=id2,
+    text="tefdsf32sst",
+    timestamp=datetime(1995, 2, 22, 16, 5),
+    created=datetime(1995, 2, 22, 16, 6),
+    author_id="4b114b4315b24df09829e0bd2ab4a89f"
+)
+
+post_data3 = dict(
+    id=id2,
+    text="Hello world!",
+    timestamp=datetime(1995, 2, 22, 16, 5),
+    created=datetime(1995, 2, 22, 16, 6),
+    author_id="e018f8b244e0430193c7a7e227c5d3de"
+)
 
 create_post = CreatePostUseCase().create(post_data)
 create_post2 = CreatePostUseCase().create(post_data2)
+CreatePostUseCase().create(post_data3)
 
 posts = PostListUseCase().get_list({})
 
@@ -80,3 +89,4 @@ def posts(user, id):
 
 
 run(host='localhost', port=8082, debug=True, reloader=True)
+# run(host='0.0.0.0', port=9000, debug=True, reloader=True)
